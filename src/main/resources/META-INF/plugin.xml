@@ -11,11 +11,9 @@
 
   <depends>com.intellij.modules.platform</depends>
 
-  <icon>META-INF/pluginIcon.svg</icon>
-
-
   <extensions defaultExtensionNs="com.intellij">
-
+    <toolWindow id="Aider Output" secondary="true" icon="META-INF/pluginIcon.svg" anchor="right"
+                factoryClass="org.vivant.robin.aider.AiderToolWindowFactory"/>
   </extensions>
 
   <actions>
