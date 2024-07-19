@@ -31,13 +31,7 @@ class AiderInspectionAction : AnAction() {
         // Run all enabled inspections
         for (toolWrapper in tools) {
             if (toolWrapper is LocalInspectionToolWrapper) {
-                /*
-                TODO
-                Overload resolution ambiguity. All these functions match.
-public final val LocalInspectionToolWrapper.tool: LocalInspectionTool
-public final val Tools.tool: InspectionToolWrapper<*, *>
-                 */
-                val tool = toolWrapper.tool
+                val tool = (toolWrapper as LocalInspectionToolWrapper).tool
                 val descriptors = tool.checkFile(psiFile, inspectionManager, false)
                 problems.addAll(descriptors)
             }
