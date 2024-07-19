@@ -2,3 +2,7 @@
   <circle cx="20" cy="20" r="18" fill="#3592C4"/>
   <text x="20" y="25" font-family="Arial" font-size="16" fill="white" text-anchor="middle">AI</text>
 </svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
+  <circle cx="20" cy="20" r="18" fill="#3592C4"/>
+  <text x="20" y="25" font-family="Arial" font-size="16" fill="white" text-anchor="middle">AI</text>
+</svg>
