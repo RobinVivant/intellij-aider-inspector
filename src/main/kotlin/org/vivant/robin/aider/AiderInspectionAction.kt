@@ -87,7 +87,7 @@ class AiderInspectionAction : AnAction() {
 
                     // Update the tool window content
                     com.intellij.openapi.application.ApplicationManager.getApplication().invokeLater {
-                        AiderToolWindowFactory.updateContent(toolWindow, output.toString())
+                        updateToolWindowContent(toolWindow, output.toString())
                     }
                 }
             }

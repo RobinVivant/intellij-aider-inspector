@@ -18,22 +18,20 @@ class AiderToolWindowFactory : ToolWindowFactory {
         )
         toolWindow.contentManager.addContent(content)
     }
+}
 
-    companion object {
-        fun updateContent(toolWindow: ToolWindow, output: String) {
-            val content = ContentFactory.getInstance().createContent(
-                com.intellij.ui.components.JBScrollPane(
-                    com.intellij.ui.components.JBTextArea(output).apply {
-                        isEditable = false
-                    }
-                ),
-                "Aider Output",
-                false
-            )
+fun updateToolWindowContent(toolWindow: ToolWindow, output: String) {
+    val content = ContentFactory.getInstance().createContent(
+        com.intellij.ui.components.JBScrollPane(
+            com.intellij.ui.components.JBTextArea(output).apply {
+                isEditable = false
+            }
+        ),
+        "Aider Output",
+        false
+    )
 
-            toolWindow.contentManager.removeAllContents(true)
-            toolWindow.contentManager.addContent(content)
-            toolWindow.show()
-        }
-    }
+    toolWindow.contentManager.removeAllContents(true)
+    toolWindow.contentManager.addContent(content)
+    toolWindow.show()
 }
