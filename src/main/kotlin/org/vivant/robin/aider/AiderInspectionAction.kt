@@ -1,15 +1,13 @@
 package org.vivant.robin.aider
 
+import com.intellij.codeInspection.InspectionManager
+import com.intellij.codeInspection.ProblemDescriptor
+import com.intellij.codeInspection.ex.LocalInspectionToolWrapper
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.codeInspection.InspectionManager
-import com.intellij.codeInspection.LocalInspectionTool
-import com.intellij.codeInspection.ProblemDescriptor
-import com.intellij.codeInspection.ex.InspectionToolWrapper
-import com.intellij.codeInspection.ex.LocalInspectionToolWrapper
 import com.intellij.profile.codeInspection.InspectionProjectProfileManager
 import com.intellij.psi.PsiManager
 
@@ -47,12 +45,17 @@ class AiderInspectionAction : AnAction() {
             "${problem.psiElement.containingFile.name}:${problem.lineNumber}: ${problem.descriptionTemplate}"
         }
 
-        // TODO: Implement sending to aider
         sendToAider(formattedProblems)
     }
 
     private fun sendToAider(problems: String) {
-        // TODO: Implement this method to send problems to aider
+        /*
+        TODO
+        use a similar approach:
+            echo "$EXTRACTED_INFO" | aider --no-auto-commits
+
+ I need the plugin to show the aider output somewhere in intellij
+         */
         println("Sending to aider: $problems")
     }
 }
