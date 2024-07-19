@@ -8,10 +8,9 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.profile.codeInspection.InspectionProjectProfileManager
 import com.intellij.psi.PsiManager
-import com.intellij.openapi.wm.ToolWindowManager
-import com.intellij.openapi.wm.ToolWindowManager
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
@@ -71,7 +70,7 @@ class AiderInspectionAction : AnAction() {
         // Show output in the Aider tool window
         val toolWindowManager = ToolWindowManager.getInstance(project)
         val toolWindow = toolWindowManager.getToolWindow("Aider Output")
-        
+
         if (toolWindow != null) {
             AiderToolWindowFactory.updateContent(toolWindow, output.toString())
         } else {
