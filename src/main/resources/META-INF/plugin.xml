@@ -9,6 +9,8 @@
     This plugin runs code inspections and sends the results to aider.
     ]]></description>
 
+  <version>1.0</version>
+
   <depends>com.intellij.modules.platform</depends>
 
   <extensions defaultExtensionNs="com.intellij">

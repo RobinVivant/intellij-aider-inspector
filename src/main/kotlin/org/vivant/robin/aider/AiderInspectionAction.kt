@@ -39,7 +39,13 @@ class AiderInspectionAction : AnAction() {
         }
 
         if (problems.isEmpty()) {
-            // No issues found
+            // No issues found, update the tool window with a message
+            val toolWindowManager = ToolWindowManager.getInstance(project)
+            val toolWindow = toolWindowManager.getToolWindow("Aider Output")
+            if (toolWindow != null) {
+                updateToolWindowContent(toolWindow, "No issues found in the current file.")
+                toolWindow.show()
+            }
             return
         }
 

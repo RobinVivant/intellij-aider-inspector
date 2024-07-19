@@ -23,7 +23,20 @@ class AiderToolWindowFactory : ToolWindowFactory {
 }
 
 fun updateToolWindowContent(toolWindow: ToolWindow, output: String) {
-    val content = ContentFactory.getInstance().createContent(
+    val existingContent = toolWindow.contentManager.getContent(0)
+    if (existingContent != null) {
+        val component = existingContent.component
+        if (component is JBScrollPane) {
+            val textArea = component.viewport.view as? JBTextArea
+            if (textArea != null) {
+                textArea.text = output
+                return
+            }
+        }
+    }
+
+    // If we couldn't update the existing content, create a new one
+    val newContent = ContentFactory.getInstance().createContent(
         JBScrollPane(
             JBTextArea(output).apply {
                 isEditable = false
@@ -34,6 +47,6 @@ fun updateToolWindowContent(toolWindow: ToolWindow, output: String) {
     )
 
     toolWindow.contentManager.removeAllContents(true)
-    toolWindow.contentManager.addContent(content)
+    toolWindow.contentManager.addContent(newContent)
     toolWindow.show()
 }
