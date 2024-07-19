@@ -33,15 +33,7 @@ class AiderInspectionAction : AnAction() {
             if (toolWrapper is LocalInspectionToolWrapper) {
                 val tool = (toolWrapper as LocalInspectionToolWrapper).tool
                 val descriptors = tool.checkFile(psiFile, inspectionManager, false)
-                /*
-                TODO
-                Type mismatch.
-Required:
-Array<out TypeVariable(T)>
-Found:
-Array<(out) ProblemDescriptor!>?
-                 */
-                problems.addAll(descriptors)
+                descriptors?.let { problems.addAll(it) }
             }
         }
 
