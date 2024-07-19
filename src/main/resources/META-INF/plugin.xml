@@ -1,0 +1,32 @@
+<idea-plugin>
+  <id>org.vivant.robin.aider-inspect</id>
+
+
+  <name>Aider Inspector</name>
+
+
+  <vendor email="robin.vivant@gmail.com">Robin Vivant</vendor>
+
+  <description><![CDATA[
+    This plugin runs code inspections and sends the results to aider.
+    ]]></description>
+
+
+  <depends>com.intellij.modules.platform</depends>
+
+
+  <extensions defaultExtensionNs="com.intellij">
+
+  </extensions>
+
+  <actions>
+    <action id="org.vivant.robin.aider.AiderInspectionAction"
+            class="org.vivant.robin.aider.AiderInspectionAction"
+            text="Run Aider Inspection" description="Run inspections and send results to aider">
+      <add-to-group group-id="ToolsMenu" anchor="last"/>
+      <keyboard-shortcut keymap="$default" first-keystroke="shift meta UNKNOWN"/>
+    </action>
+  </actions>
+
+
+</idea-plugin>
