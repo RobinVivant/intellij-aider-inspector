@@ -10,6 +10,11 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.profile.codeInspection.InspectionProjectProfileManager
 import com.intellij.psi.PsiManager
+import com.intellij.openapi.wm.ToolWindowManager
+import com.intellij.openapi.wm.ToolWindow
+import com.intellij.ui.content.ContentFactory
+import java.io.BufferedReader
+import java.io.InputStreamReader
 
 class AiderInspectionAction : AnAction() {
 
@@ -45,17 +50,45 @@ class AiderInspectionAction : AnAction() {
             "${problem.psiElement.containingFile.name}:${problem.lineNumber}: ${problem.descriptionTemplate}"
         }
 
-        sendToAider(formattedProblems)
+        sendToAider(project, formattedProblems)
     }
 
-    private fun sendToAider(problems: String) {
-        /*
-        TODO
-        use a similar approach:
-            echo "$EXTRACTED_INFO" | aider --no-auto-commits
+    private fun sendToAider(project: Project, problems: String) {
+        val process = ProcessBuilder("bash", "-c", "echo \"$problems\" | aider --no-auto-commits")
+            .redirectErrorStream(true)
+            .start()
 
- I need the plugin to show the aider output somewhere in intellij
-         */
-        println("Sending to aider: $problems")
+        val reader = BufferedReader(InputStreamReader(process.inputStream))
+        val output = StringBuilder()
+
+        reader.useLines { lines ->
+            lines.forEach { line ->
+                output.append(line).append("\n")
+            }
+        }
+
+        process.waitFor()
+
+        // Show output in a tool window
+        val toolWindowManager = ToolWindowManager.getInstance(project)
+        var toolWindow = toolWindowManager.getToolWindow("Aider Output")
+
+        if (toolWindow == null) {
+            toolWindow = toolWindowManager.registerToolWindow("Aider Output", true, com.intellij.openapi.wm.ToolWindowAnchor.BOTTOM)
+        }
+
+        val content = ContentFactory.SERVICE.getInstance().createContent(
+            com.intellij.ui.components.JBScrollPane(
+                com.intellij.ui.components.JBTextArea(output.toString()).apply {
+                    isEditable = false
+                }
+            ),
+            "Aider Output",
+            false
+        )
+
+        toolWindow.contentManager.removeAllContents(true)
+        toolWindow.contentManager.addContent(content)
+        toolWindow.show()
     }
 }
