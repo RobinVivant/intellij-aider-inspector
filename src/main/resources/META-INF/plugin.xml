@@ -1,9 +1,7 @@
 <idea-plugin>
   <id>org.vivant.robin.aider-inspect</id>
 
-
   <name>Aider Inspector</name>
-
 
   <vendor email="robin.vivant@gmail.com">Robin Vivant</vendor>
 
@@ -11,8 +9,9 @@
     This plugin runs code inspections and sends the results to aider.
     ]]></description>
 
-
   <depends>com.intellij.modules.platform</depends>
+
+  <icon>META-INF/pluginIcon.svg</icon>
 
 
   <extensions defaultExtensionNs="com.intellij">
