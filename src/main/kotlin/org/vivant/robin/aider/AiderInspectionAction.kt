@@ -11,8 +11,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.profile.codeInspection.InspectionProjectProfileManager
 import com.intellij.psi.PsiManager
 import com.intellij.openapi.wm.ToolWindowManager
-import com.intellij.openapi.wm.ToolWindow
-import com.intellij.ui.content.ContentFactory
+import com.intellij.openapi.wm.ToolWindowManager
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
@@ -69,26 +68,15 @@ class AiderInspectionAction : AnAction() {
 
         process.waitFor()
 
-        // Show output in a tool window
+        // Show output in the Aider tool window
         val toolWindowManager = ToolWindowManager.getInstance(project)
-        var toolWindow = toolWindowManager.getToolWindow("Aider Output")
-
-        if (toolWindow == null) {
-            toolWindow = toolWindowManager.registerToolWindow("Aider Output", true, com.intellij.openapi.wm.ToolWindowAnchor.BOTTOM)
+        val toolWindow = toolWindowManager.getToolWindow("Aider Output")
+        
+        if (toolWindow != null) {
+            AiderToolWindowFactory.updateContent(toolWindow, output.toString())
+        } else {
+            // Handle the case where the tool window is not found
+            println("Aider Output tool window not found")
         }
-
-        val content = ContentFactory.getInstance().createContent(
-            com.intellij.ui.components.JBScrollPane(
-                com.intellij.ui.components.JBTextArea(output.toString()).apply {
-                    isEditable = false
-                }
-            ),
-            "Aider Output",
-            false
-        )
-
-        toolWindow.contentManager.removeAllContents(true)
-        toolWindow.contentManager.addContent(content)
-        toolWindow.show()
     }
 }
