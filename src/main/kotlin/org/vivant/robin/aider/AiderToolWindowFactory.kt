@@ -7,7 +7,16 @@ import com.intellij.ui.content.ContentFactory
 
 class AiderToolWindowFactory : ToolWindowFactory {
     override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
-        // Initial content creation is not needed here
+        val content = ContentFactory.getInstance().createContent(
+            com.intellij.ui.components.JBScrollPane(
+                com.intellij.ui.components.JBTextArea("Welcome to Aider Inspector").apply {
+                    isEditable = false
+                }
+            ),
+            "Aider Output",
+            false
+        )
+        toolWindow.contentManager.addContent(content)
     }
 
     companion object {

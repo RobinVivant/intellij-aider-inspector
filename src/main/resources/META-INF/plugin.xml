@@ -12,7 +12,7 @@
   <depends>com.intellij.modules.platform</depends>
 
   <extensions defaultExtensionNs="com.intellij">
-    <toolWindow id="Aider Output" secondary="true" icon="/META-INF/pluginIcon.svg" anchor="right"
+    <toolWindow id="Aider Output" secondary="false" icon="/pluginIcon.svg" anchor="right"
                 factoryClass="org.vivant.robin.aider.AiderToolWindowFactory"/>
   </extensions>
 
