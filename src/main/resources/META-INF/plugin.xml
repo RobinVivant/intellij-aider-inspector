@@ -3,15 +3,20 @@
 
   <name>Aider Inspector</name>
 
-  <vendor email="robin.vivant@gmail.com">Robin Vivant</vendor>
+  <vendor email="robin.vivant@gmail.com" url="https://github.com/yourusername">Robin Vivant</vendor>
 
   <description><![CDATA[
-    This plugin runs code inspections and sends the results to aider.
+    This plugin runs code inspections and sends the results to aider for AI-assisted code improvements.
+    Features:
+    - Run inspections on the current file
+    - Send inspection results to aider
+    - View aider's suggestions in a dedicated tool window
     ]]></description>
 
   <version>1.0</version>
 
   <depends>com.intellij.modules.platform</depends>
+  <depends>com.intellij.modules.java</depends>
 
   <extensions defaultExtensionNs="com.intellij">
     <toolWindow id="Aider Output" secondary="false" icon="/META-INF/pluginIcon.svg" anchor="right"
@@ -27,6 +32,9 @@
     </action>
   </actions>
 
+  <idea-version since-build="232" until-build="242.*"/>
+
+  <category>Code Tools</category>
 
 </idea-plugin>
 

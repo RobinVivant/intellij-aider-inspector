@@ -45,6 +45,9 @@ class AiderInspectionAction : AnAction() {
             if (toolWindow != null) {
                 updateToolWindowContent(toolWindow, "No issues found in the current file.")
                 toolWindow.show()
+            } else {
+                // Log an error or show a notification if the tool window is not found
+                com.intellij.openapi.ui.Messages.showErrorDialog(project, "Aider Output tool window not found", "Error")
             }
             return
         }
@@ -60,7 +63,10 @@ class AiderInspectionAction : AnAction() {
     private fun sendToAider(project: Project, problems: String) {
         val toolWindowManager = ToolWindowManager.getInstance(project)
         val toolWindow = toolWindowManager.getToolWindow("Aider Output")
-            ?: return  // If the tool window is null, we can't proceed
+        if (toolWindow == null) {
+            com.intellij.openapi.ui.Messages.showErrorDialog(project, "Aider Output tool window not found", "Error")
+            return
+        }
 
         // Show the tool window
         toolWindow.show()
@@ -69,25 +75,34 @@ class AiderInspectionAction : AnAction() {
         com.intellij.openapi.progress.ProgressManager.getInstance().run(
             object : com.intellij.openapi.progress.Task.Backgroundable(project, "Running Aider Inspection") {
                 override fun run(indicator: com.intellij.openapi.progress.ProgressIndicator) {
-                    val process = ProcessBuilder("bash", "-c", "echo \"$problems\" | aider --no-auto-commits")
-                        .redirectErrorStream(true)
-                        .start()
+                    try {
+                        val process = ProcessBuilder("bash", "-c", "echo \"$problems\" | aider --no-auto-commits")
+                            .redirectErrorStream(true)
+                            .start()
 
-                    val reader = BufferedReader(InputStreamReader(process.inputStream))
-                    val output = StringBuilder()
+                        val reader = BufferedReader(InputStreamReader(process.inputStream))
+                        val output = StringBuilder()
 
-                    reader.useLines { lines ->
-                        lines.forEach { line ->
-                            output.append(line).append("\n")
-                            indicator.text = "Processing: $line"
+                        reader.useLines { lines ->
+                            lines.forEach { line ->
+                                output.append(line).append("\n")
+                                indicator.text = "Processing: $line"
+                            }
                         }
-                    }
 
-                    process.waitFor()
+                        val exitCode = process.waitFor()
+                        if (exitCode != 0) {
+                            output.append("Aider process exited with code $exitCode")
+                        }
 
-                    // Update the tool window content
-                    com.intellij.openapi.application.ApplicationManager.getApplication().invokeLater {
-                        updateToolWindowContent(toolWindow, output.toString())
+                        // Update the tool window content
+                        com.intellij.openapi.application.ApplicationManager.getApplication().invokeLater {
+                            updateToolWindowContent(toolWindow, output.toString())
+                        }
+                    } catch (e: Exception) {
+                        com.intellij.openapi.application.ApplicationManager.getApplication().invokeLater {
+                            updateToolWindowContent(toolWindow, "Error: ${e.message}")
+                        }
                     }
                 }
             }
