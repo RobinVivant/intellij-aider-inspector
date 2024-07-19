@@ -77,7 +77,7 @@ class AiderInspectionAction : AnAction() {
             toolWindow = toolWindowManager.registerToolWindow("Aider Output", true, com.intellij.openapi.wm.ToolWindowAnchor.BOTTOM)
         }
 
-        val content = ContentFactory.SERVICE.getInstance().createContent(
+        val content = ContentFactory.getInstance().createContent(
             com.intellij.ui.components.JBScrollPane(
                 com.intellij.ui.components.JBTextArea(output.toString()).apply {
                     isEditable = false
