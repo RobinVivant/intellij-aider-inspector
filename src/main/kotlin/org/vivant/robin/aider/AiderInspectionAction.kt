@@ -23,8 +23,7 @@ class AiderInspectionAction : AnAction() {
 
         // Run all enabled inspections
         LocalInspectionTool.runForFile(psiFile, inspectionManager, false)
-            //TODO Cannot infer a type for this parameter. Please specify it explicitly.
-            .forEach { (inspection, descriptors) ->
+            .forEach { (inspection: LocalInspectionTool, descriptors: List<ProblemDescriptor>) ->
                 problems.addAll(descriptors)
             }
 
