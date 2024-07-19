@@ -54,16 +54,10 @@ class AiderInspectionAction : AnAction() {
 
     private fun sendToAider(project: Project, problems: String) {
         val toolWindowManager = ToolWindowManager.getInstance(project)
-        var toolWindow = toolWindowManager.getToolWindow("Aider Output")
-
-        if (toolWindow == null) {
-            // If the tool window doesn't exist, register it
-            toolWindow = toolWindowManager.registerToolWindow("Aider Output", true, ToolWindowAnchor.RIGHT)
-            AiderToolWindowFactory().createToolWindowContent(project, toolWindow)
-        }
+        val toolWindow = toolWindowManager.getToolWindow("Aider Output")
 
         // Show the tool window
-        toolWindow.show()
+        toolWindow?.show()
 
         // Run aider in a background task
         com.intellij.openapi.progress.ProgressManager.getInstance().run(
