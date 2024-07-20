@@ -175,10 +175,6 @@ class AiderInspectionAction : AnAction() {
         }
     }
 
-    private fun updateToolWindow(project: Project, message: String) {
-        val toolWindow = getToolWindow(project) ?: return
-        updateToolWindowContent(toolWindow, message)
-    }
 
     private fun updateToolWindowContent(toolWindow: ToolWindow, content: String) {
         val contentManager = toolWindow.contentManager
