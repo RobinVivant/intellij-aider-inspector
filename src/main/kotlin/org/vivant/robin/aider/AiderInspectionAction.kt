@@ -124,10 +124,9 @@ class AiderInspectionAction : AnAction() {
                         com.intellij.openapi.application.ApplicationManager.getApplication().invokeLater {
                             updateToolWindowContent(toolWindow, output.toString())
                             com.intellij.notification.NotificationGroupManager.getInstance()
-                                //TODO Cannot resolve notification group id 'Aider Inspection'
                                 .getNotificationGroup("Aider Inspection")
-                                .createNotification("Aider inspection complete", com.intellij.notification.NotificationType.INFORMATION)
-                                .notify(project)
+                                ?.createNotification("Aider inspection complete", com.intellij.notification.NotificationType.INFORMATION)
+                                ?.notify(project)
                         }
                     } catch (e: Exception) {
                         LOG.error("Error running Aider", e)
