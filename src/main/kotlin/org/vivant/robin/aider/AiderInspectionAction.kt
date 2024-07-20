@@ -38,7 +38,7 @@ class AiderInspectionAction : AnAction() {
         // Run all enabled inspections
         for (toolWrapper in tools) {
             if (toolWrapper is LocalInspectionToolWrapper) {
-                val tool = toolWrapper.tool
+                val tool = (toolWrapper as LocalInspectionToolWrapper).tool
                 val holder = ProblemsHolder(com.intellij.codeInspection.InspectionManager.getInstance(project), psiFile, false)
                 val visitor = tool.buildVisitor(holder, false)
                 psiFile.accept(object : com.intellij.psi.PsiRecursiveElementVisitor() {
