@@ -95,7 +95,7 @@ class AiderInspectionAction : AnAction() {
             val formattedProblems = problems.joinToString("\n")
 
             sendToAider(project, formattedProblems)
-        }.inSmartMode(project).submit(com.intellij.openapi.progress.ProgressManager.getInstance().getProgressIndicator())
+        }.inSmartMode(project)
     }
 
     private fun sendToAider(project: Project, problems: String) {
