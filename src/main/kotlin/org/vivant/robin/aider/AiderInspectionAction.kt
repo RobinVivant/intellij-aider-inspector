@@ -18,7 +18,7 @@ import com.intellij.psi.PsiFile
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
-class AiderInspectionAction : AnAction() {
+class AiderInspectionAction : AnAction("Run Aider Inspection", "Runs Aider inspection on the current file", null) {
     private val LOG = Logger.getInstance(AiderInspectionAction::class.java)
 
     override fun getActionUpdateThread(): ActionUpdateThread {
@@ -35,6 +35,7 @@ class AiderInspectionAction : AnAction() {
         LOG.info("AiderInspectionAction triggered")
         val project: Project = e.project ?: run {
             LOG.warn("Project is null")
+            Messages.showErrorDialog("Project is null", "Error")
             return
         }
         if (project.isDisposed) {

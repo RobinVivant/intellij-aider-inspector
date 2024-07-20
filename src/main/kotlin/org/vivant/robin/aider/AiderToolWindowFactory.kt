@@ -23,13 +23,16 @@ class AiderToolWindowFactory : ToolWindowFactory {
         panel.add(toolbar.component, BorderLayout.NORTH)
 
         // Add the text area
-        val textArea = JBTextArea("Welcome to Aider Inspector").apply {
+        val textArea = JBTextArea("Welcome to Aider Inspector. Click the play button to run an inspection.").apply {
             isEditable = false
         }
         panel.add(JBScrollPane(textArea), BorderLayout.CENTER)
 
         val content = ContentFactory.getInstance().createContent(panel, "Aider Output", false)
         toolWindow.contentManager.addContent(content)
+
+        // Make sure the tool window is visible
+        toolWindow.show()
     }
 }
 
