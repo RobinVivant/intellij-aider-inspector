@@ -5,6 +5,7 @@ import com.intellij.codeInspection.InspectionManager
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
@@ -19,6 +20,10 @@ import java.io.InputStreamReader
 
 class AiderInspectionAction : AnAction() {
     private val LOG = Logger.getInstance(AiderInspectionAction::class.java)
+
+    override fun getActionUpdateThread(): ActionUpdateThread {
+        return ActionUpdateThread.EDT
+    }
 
     override fun update(e: AnActionEvent) {
         val project = e.project
@@ -147,6 +152,7 @@ class AiderInspectionAction : AnAction() {
 
     private fun updateToolWindowContent(toolWindow: ToolWindow, content: String) {
         val contentManager = toolWindow.contentManager
+        // TODO 'com.intellij.ui.content.ContentFactory.SERVICE' is deprecated and marked for removal
         val factory = com.intellij.ui.content.ContentFactory.SERVICE.getInstance()
         val newContent = factory.createContent(
             com.intellij.ui.components.JBScrollPane(
