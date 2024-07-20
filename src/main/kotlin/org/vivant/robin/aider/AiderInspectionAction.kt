@@ -98,7 +98,8 @@ class AiderInspectionAction : AnAction() {
                 override fun run(indicator: com.intellij.openapi.progress.ProgressIndicator) {
                     try {
                         LOG.info("Starting Aider process")
-                        val process = ProcessBuilder("bash", "-c", "echo \"$problems\" | aider --no-auto-commits")
+                        val escapedProblems = problems.replace("\"", "\\\"").replace("$", "\\$")
+                        val process = ProcessBuilder("bash", "-c", "echo \"$escapedProblems\" | aider --no-auto-commits")
                             .redirectErrorStream(true)
                             .start()
 
@@ -122,11 +123,24 @@ class AiderInspectionAction : AnAction() {
                         // Update the tool window content
                         com.intellij.openapi.application.ApplicationManager.getApplication().invokeLater {
                             updateToolWindowContent(toolWindow, output.toString())
+                            com.intellij.notification.NotificationGroupManager.getInstance()
+                                .getNotificationGroup("Aider Inspection")
+                                .createNotification("Aider inspection complete", com.intellij.notification.NotificationType.INFORMATION)
+                                .notify(project)
                         }
                     } catch (e: Exception) {
                         LOG.error("Error running Aider", e)
                         com.intellij.openapi.application.ApplicationManager.getApplication().invokeLater {
-                            updateToolWindowContent(toolWindow, "Error: ${e.message}")
+                            when (e) {
+                                is java.io.IOException -> {
+                                    if (e.message?.contains("Cannot run program \"aider\"") == true) {
+                                        updateToolWindowContent(toolWindow, "Error: Aider command not found. Please ensure Aider is installed and in your PATH.")
+                                    } else {
+                                        updateToolWindowContent(toolWindow, "Error: ${e.message}")
+                                    }
+                                }
+                                else -> updateToolWindowContent(toolWindow, "Error: ${e.message}")
+                            }
                         }
                     }
                 }
