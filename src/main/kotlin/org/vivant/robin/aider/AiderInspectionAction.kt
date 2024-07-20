@@ -37,6 +37,10 @@ class AiderInspectionAction : AnAction() {
             LOG.warn("Project is null")
             return
         }
+        if (project.isDisposed) {
+            LOG.warn("Project is disposed")
+            return
+        }
         val editor: Editor = e.getData(CommonDataKeys.EDITOR) ?: run {
             LOG.warn("Editor is null")
             return
@@ -72,7 +76,9 @@ class AiderInspectionAction : AnAction() {
             LOG.info("Found ${problems.size} problems")
 
             if (problems.isEmpty()) {
-                updateToolWindow(project, "No issues found in the current file.")
+                com.intellij.openapi.application.ApplicationManager.getApplication().invokeLater {
+                    Messages.showInfoMessage(project, "No issues found in the current file.", "Aider Inspection")
+                }
                 return
             }
 
@@ -98,6 +104,9 @@ class AiderInspectionAction : AnAction() {
                 override fun run(indicator: com.intellij.openapi.progress.ProgressIndicator) {
                     try {
                         LOG.info("Starting Aider process")
+                        indicator.text = "Starting Aider process"
+                        indicator.isIndeterminate = false
+                        
                         val escapedProblems = problems.replace("\"", "\\\"").replace("$", "\\$")
                         val process = ProcessBuilder("bash", "-c", "echo \"$escapedProblems\" | aider --no-auto-commits")
                             .redirectErrorStream(true)
@@ -107,8 +116,9 @@ class AiderInspectionAction : AnAction() {
                         val output = StringBuilder()
 
                         reader.useLines { lines ->
-                            lines.forEach { line ->
+                            lines.forEachIndexed { index, line ->
                                 output.append(line).append("\n")
+                                indicator.fraction = (index + 1).toDouble() / problems.split("\n").size
                                 indicator.text = "Processing: $line"
                                 LOG.info("Aider output: $line")
                             }
