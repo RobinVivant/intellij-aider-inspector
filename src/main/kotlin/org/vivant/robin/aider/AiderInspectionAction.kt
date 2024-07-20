@@ -23,11 +23,6 @@ class AiderInspectionAction : AnAction() {
         val editor: Editor = e.getData(CommonDataKeys.EDITOR) ?: return
         val psiFile: PsiFile = PsiDocumentManager.getInstance(project).getPsiFile(editor.document) ?: return
 
-        // Check if the file is a Kotlin or Java file
-        if (!psiFile.name.endsWith(".kt") && !psiFile.name.endsWith(".java")) {
-            com.intellij.openapi.ui.Messages.showInfoMessage(project, "This action only supports Kotlin and Java files.", "Unsupported File Type")
-            return
-        }
 
         val problems = mutableListOf<String>()
 
