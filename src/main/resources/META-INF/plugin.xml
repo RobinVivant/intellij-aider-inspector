@@ -20,7 +20,7 @@
   <extensions defaultExtensionNs="com.intellij">
     <toolWindow id="Aider Output" secondary="false" icon="/META-INF/aider_icon.svg" anchor="right"
                 factoryClass="org.vivant.robin.aider.AiderToolWindowFactory"/>
-    <notificationGroup id="Aider Inspection" displayType="BALLOON" key="notification.group.aider.inspection"/>
+    <notificationGroup id="Aider Inspection" displayType="BALLOON"/>
   </extensions>
 
   <actions>
