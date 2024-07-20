@@ -1,16 +1,18 @@
 package org.vivant.robin.aider
 
-import com.intellij.codeInspection.InspectionManager
-import com.intellij.codeInspection.ProblemDescriptor
+import com.intellij.codeInspection.LocalInspectionTool
+import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.codeInspection.ex.LocalInspectionToolWrapper
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.profile.codeInspection.InspectionProjectProfileManager
-import com.intellij.psi.PsiManager
+import com.intellij.psi.PsiDocumentManager
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
@@ -18,12 +20,16 @@ class AiderInspectionAction : AnAction() {
 
     override fun actionPerformed(e: AnActionEvent) {
         val project: Project = e.project ?: return
-        val file: VirtualFile = e.getData(CommonDataKeys.VIRTUAL_FILE) ?: return
+        val editor: Editor = e.getData(CommonDataKeys.EDITOR) ?: return
+        val psiFile: PsiFile = PsiDocumentManager.getInstance(project).getPsiFile(editor.document) ?: return
 
-        val psiFile = PsiManager.getInstance(project).findFile(file) ?: return
-        val inspectionManager = InspectionManager.getInstance(project)
+        // Check if the file is a Kotlin or Java file
+        if (!psiFile.name.endsWith(".kt") && !psiFile.name.endsWith(".java")) {
+            com.intellij.openapi.ui.Messages.showInfoMessage(project, "This action only supports Kotlin and Java files.", "Unsupported File Type")
+            return
+        }
 
-        val problems = mutableListOf<ProblemDescriptor>()
+        val problems = mutableListOf<String>()
 
         // Get all enabled inspections
         val profile = InspectionProjectProfileManager.getInstance(project).currentProfile
@@ -32,9 +38,18 @@ class AiderInspectionAction : AnAction() {
         // Run all enabled inspections
         for (toolWrapper in tools) {
             if (toolWrapper is LocalInspectionToolWrapper) {
-                val tool = (toolWrapper as LocalInspectionToolWrapper).tool
-                val descriptors = tool.checkFile(psiFile, inspectionManager, false)
-                descriptors?.let { problems.addAll(it) }
+                val tool = toolWrapper.tool
+                val holder = ProblemsHolder(com.intellij.codeInspection.InspectionManager.getInstance(project), psiFile, false)
+                val visitor = tool.buildVisitor(holder, false)
+                psiFile.accept(object : com.intellij.psi.PsiRecursiveElementVisitor() {
+                    override fun visitElement(element: PsiElement) {
+                        element.accept(visitor)
+                        super.visitElement(element)
+                    }
+                })
+                problems.addAll(holder.results.map { problem ->
+                    "${psiFile.name}:${editor.document.getLineNumber(problem.psiElement.textRange.startOffset) + 1}: ${problem.descriptionTemplate}"
+                })
             }
         }
 
@@ -53,9 +68,7 @@ class AiderInspectionAction : AnAction() {
         }
 
         // Format problems for aider
-        val formattedProblems = problems.joinToString("\n") { problem ->
-            "${problem.psiElement.containingFile.name}:${problem.lineNumber}: ${problem.descriptionTemplate}"
-        }
+        val formattedProblems = problems.joinToString("\n")
 
         sendToAider(project, formattedProblems)
     }
