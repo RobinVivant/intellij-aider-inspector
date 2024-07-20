@@ -16,6 +16,12 @@ import java.io.InputStreamReader
 
 class AiderInspectionAction : AnAction() {
 
+    override fun update(e: AnActionEvent) {
+        val project = e.project
+        val editor = e.getData(CommonDataKeys.EDITOR)
+        e.presentation.isEnabledAndVisible = project != null && editor != null
+    }
+
     override fun actionPerformed(e: AnActionEvent) {
         val project: Project = e.project ?: return
         val editor: Editor = e.getData(CommonDataKeys.EDITOR) ?: return

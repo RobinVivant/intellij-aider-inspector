@@ -26,7 +26,7 @@
     <action id="org.vivant.robin.aider.AiderInspectionAction"
             class="org.vivant.robin.aider.AiderInspectionAction"
             text="Run Aider Inspection" description="Run inspections and send results to aider">
-      <add-to-group group-id="ToolsMenu" anchor="last"/>
+      <add-to-group group-id="EditorPopupMenu" anchor="last"/>
       <keyboard-shortcut keymap="$default" first-keystroke="shift meta ;"/>
     </action>
   </actions>
