@@ -26,6 +26,7 @@ class AiderInspectionAction : AnAction() {
 
         // Get all enabled inspections
         val profile = InspectionProjectProfileManager.getInstance(project).currentProfile
+        //TODO fix this
         val tools = profile.getInspectionTools(project)
             .filter { it.isEnabled }
 
