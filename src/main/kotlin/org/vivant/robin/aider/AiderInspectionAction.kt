@@ -38,6 +38,7 @@ class AiderInspectionAction : AnAction("Run Aider Inspection", "Runs Aider inspe
             Messages.showErrorDialog("Project is null", "Error")
             return
         }
+        Messages.showInfoMessage(project, "AiderInspectionAction triggered", "Debug Info")
         if (project.isDisposed) {
             LOG.warn("Project is disposed")
             return
