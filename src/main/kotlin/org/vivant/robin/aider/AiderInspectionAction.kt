@@ -7,6 +7,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.application.ReadAction
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
@@ -94,7 +95,7 @@ class AiderInspectionAction : AnAction() {
             val formattedProblems = problems.joinToString("\n")
 
             sendToAider(project, formattedProblems)
-        }.submit(com.intellij.openapi.progress.util.ProgressIndicatorUtils.getGlobalProgressIndicator())
+        }.inSmartMode(project).submit(com.intellij.openapi.progress.ProgressManager.getInstance().getProgressIndicator())
     }
 
     private fun sendToAider(project: Project, problems: String) {
