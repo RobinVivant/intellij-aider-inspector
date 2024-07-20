@@ -1,7 +1,7 @@
 package org.vivant.robin.aider
 
-import com.intellij.codeInspection.ProblemsHolder
-import com.intellij.codeInspection.ex.LocalInspectionToolWrapper
+import com.intellij.codeInspection.InspectionEngine
+import com.intellij.codeInspection.InspectionManager
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
@@ -10,7 +10,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.profile.codeInspection.InspectionProjectProfileManager
 import com.intellij.psi.PsiDocumentManager
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -30,23 +29,12 @@ class AiderInspectionAction : AnAction() {
         val tools = profile.getAllEnabledInspectionTools(project)
 
         // Run all enabled inspections
-        for (toolWrapper in tools) {
-            if (toolWrapper is LocalInspectionToolWrapper) {
-                val tool = (toolWrapper as LocalInspectionToolWrapper).tool
-                val holder =
-                    ProblemsHolder(com.intellij.codeInspection.InspectionManager.getInstance(project), psiFile, false)
-                val visitor = tool.buildVisitor(holder, false)
-                psiFile.accept(object : com.intellij.psi.PsiRecursiveElementVisitor() {
-                    override fun visitElement(element: PsiElement) {
-                        element.accept(visitor)
-                        super.visitElement(element)
-                    }
-                })
-                problems.addAll(holder.results.map { problem ->
-                    "${psiFile.name}:${editor.document.getLineNumber(problem.psiElement.textRange.startOffset) + 1}: ${problem.descriptionTemplate}"
-                })
-            }
-        }
+        val inspectionManager = InspectionManager.getInstance(project)
+        val problemDescriptors = InspectionEngine.runInspectionOnFile(psiFile, tools, inspectionManager.createNewGlobalContext(false))
+
+        problems.addAll(problemDescriptors.map { problem ->
+            "${psiFile.name}:${editor.document.getLineNumber(problem.psiElement.textRange.startOffset) + 1}: ${problem.descriptionTemplate}"
+        })
 
         if (problems.isEmpty()) {
             // No issues found, update the tool window with a message
