@@ -28,12 +28,12 @@ class AiderToolWindowFactory : ToolWindowFactory {
         }
         panel.add(JBScrollPane(textArea), BorderLayout.CENTER)
 
-        val content = ContentFactory.getInstance().createContent(panel, "Aider Output", false)
+        val content = ContentFactory.getInstance(project).createContent(panel, "Aider Output", false)
         toolWindow.contentManager.addContent(content)
     }
 }
 
-fun updateToolWindowContent(toolWindow: ToolWindow, output: String) {
+fun updateToolWindowContent(project: Project, toolWindow: ToolWindow, output: String) {
     val content = toolWindow.contentManager.getContent(0)
     if (content != null) {
         val panel = content.component as? JPanel
@@ -60,7 +60,7 @@ fun updateToolWindowContent(toolWindow: ToolWindow, output: String) {
     }
     panel.add(JBScrollPane(textArea), BorderLayout.CENTER)
 
-    val newContent = ContentFactory.getInstance().createContent(panel, "Aider Output", false)
+    val newContent = ContentFactory.getInstance(project).createContent(panel, "Aider Output", false)
 
     toolWindow.contentManager.removeAllContents(true)
     toolWindow.contentManager.addContent(newContent)

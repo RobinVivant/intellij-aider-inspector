@@ -32,7 +32,7 @@
     </action>
   </actions>
 
-  <idea-version since-build="232" until-build="242.*"/>
+  <idea-version since-build="232"/>
 
   <category>Code Tools</category>
 
