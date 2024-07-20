@@ -66,21 +66,24 @@ class AiderInspectionAction : AnAction() {
             try {
                 // Get all enabled inspections
                 val profile = InspectionProjectProfileManager.getInstance(project).currentProfile
-                val tools = profile.getAllTools()
-                    .filter { it.isEnabled }
-                    .map { it.tool }
+                val tools = profile.getAllEnabledInspectionTools(project)
 
                 LOG.info("Running ${tools.size} enabled inspections")
 
                 // Run all enabled inspections
                 val inspectionManager = InspectionManager.getInstance(project)
+                val globalContext = inspectionManager.createNewGlobalContext()
                 val problemDescriptors = tools.flatMap { tool ->
-                    InspectionEngine.runInspectionOnFile(psiFile, tool, inspectionManager.createNewGlobalContext())
+                    LOG.info("Running inspection: ${tool.shortName}")
+                    InspectionEngine.runInspectionOnFile(psiFile, tool.tool, globalContext)
                 }
 
                 problems.addAll(problemDescriptors.mapNotNull { problem ->
                     problem.psiElement?.let { element ->
-                        "${psiFile.name}:${editor.document.getLineNumber(element.textRange.startOffset) + 1}: ${problem.descriptionTemplate}"
+                        val lineNumber = editor.document.getLineNumber(element.textRange.startOffset) + 1
+                        val description = problem.descriptionTemplate
+                        LOG.info("Found problem: ${psiFile.name}:$lineNumber: $description")
+                        "${psiFile.name}:$lineNumber: $description"
                     }
                 })
 
