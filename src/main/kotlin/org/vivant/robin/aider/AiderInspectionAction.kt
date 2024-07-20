@@ -43,7 +43,6 @@ class AiderInspectionAction : AnAction() {
             Messages.showErrorDialog("Project is null", "Error")
             return
         }
-        Messages.showInfoMessage(project, "AiderInspectionAction triggered", "Debug Info")
         if (project.isDisposed) {
             LOG.warn("Project is disposed")
             Messages.showErrorDialog("The project has been closed.", "Error")
@@ -63,6 +62,7 @@ class AiderInspectionAction : AnAction() {
         com.intellij.openapi.application.ReadAction.nonBlocking<List<String>> {
             val problems = mutableListOf<String>()
 
+            LOG.info("Starting inspection process")
             try {
                 // Get all enabled inspections
                 val profile = InspectionProjectProfileManager.getInstance(project).currentProfile
