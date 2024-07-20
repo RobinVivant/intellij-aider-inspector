@@ -16,6 +16,7 @@ import com.intellij.profile.codeInspection.InspectionProjectProfileManager
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import java.io.BufferedReader
+import java.io.IOException
 import java.io.InputStreamReader
 
 class AiderInspectionAction : AnAction("Run Aider Inspection", "Runs Aider inspection on the current file", null) {
