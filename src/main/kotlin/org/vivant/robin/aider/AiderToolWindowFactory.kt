@@ -37,15 +37,13 @@ class AiderToolWindowFactory : ToolWindowFactory {
 }
 
 fun updateToolWindowContent(project: Project, toolWindow: ToolWindow, output: String) {
-    val content = toolWindow.contentManager.getContent(0)
-    if (content != null) {
-        val panel = content.component as? JPanel
-        if (panel != null) {
-            val scrollPane = panel.getComponent(1) as? JBScrollPane
-            val textArea = scrollPane?.viewport?.view as? JBTextArea
-            if (textArea != null) {
-                textArea.text = output
-                return
+    toolWindow.contentManager.getContent(0)?.let { content ->
+        (content.component as? JPanel)?.let { panel ->
+            (panel.getComponent(1) as? JBScrollPane)?.let { scrollPane ->
+                (scrollPane.viewport?.view as? JBTextArea)?.let { textArea ->
+                    textArea.text = output
+                    return
+                }
             }
         }
     }

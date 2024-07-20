@@ -41,14 +41,17 @@ class AiderInspectionAction : AnAction("Run Aider Inspection", "Runs Aider inspe
         Messages.showInfoMessage(project, "AiderInspectionAction triggered", "Debug Info")
         if (project.isDisposed) {
             LOG.warn("Project is disposed")
+            Messages.showErrorDialog("The project has been closed.", "Error")
             return
         }
         val editor: Editor = e.getData(CommonDataKeys.EDITOR) ?: run {
             LOG.warn("Editor is null")
+            Messages.showErrorDialog(project, "No active editor found.", "Error")
             return
         }
         val psiFile: PsiFile = PsiDocumentManager.getInstance(project).getPsiFile(editor.document) ?: run {
             LOG.warn("PsiFile is null")
+            Messages.showErrorDialog(project, "Unable to get the current file.", "Error")
             return
         }
 
@@ -118,10 +121,14 @@ class AiderInspectionAction : AnAction("Run Aider Inspection", "Runs Aider inspe
                         indicator.isIndeterminate = false
 
                         val escapedProblems = problems.replace("\"", "\\\"").replace("$", "\\$")
-                        val process =
+                        val process = try {
                             ProcessBuilder("bash", "-c", "echo \"$escapedProblems\" | aider --no-auto-commits")
                                 .redirectErrorStream(true)
                                 .start()
+                        } catch (e: IOException) {
+                            LOG.error("Failed to start Aider process", e)
+                            throw RuntimeException("Failed to start Aider process: ${e.message}")
+                        }
 
                         val reader = BufferedReader(InputStreamReader(process.inputStream))
                         val output = StringBuilder()
