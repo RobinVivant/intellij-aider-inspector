@@ -1,6 +1,5 @@
 package org.vivant.robin.aider
 
-import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.codeInspection.ex.LocalInspectionToolWrapper
 import com.intellij.openapi.actionSystem.AnAction
@@ -34,7 +33,8 @@ class AiderInspectionAction : AnAction() {
         for (toolWrapper in tools) {
             if (toolWrapper is LocalInspectionToolWrapper) {
                 val tool = (toolWrapper as LocalInspectionToolWrapper).tool
-                val holder = ProblemsHolder(com.intellij.codeInspection.InspectionManager.getInstance(project), psiFile, false)
+                val holder =
+                    ProblemsHolder(com.intellij.codeInspection.InspectionManager.getInstance(project), psiFile, false)
                 val visitor = tool.buildVisitor(holder, false)
                 psiFile.accept(object : com.intellij.psi.PsiRecursiveElementVisitor() {
                     override fun visitElement(element: PsiElement) {
