@@ -19,7 +19,7 @@ import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
 
-class AiderInspectionAction : AnAction("Run Aider Inspection", "Runs Aider inspection on the current file", null) {
+class AiderInspectionAction : AnAction() {
     private val LOG = Logger.getInstance(AiderInspectionAction::class.java)
 
     override fun getActionUpdateThread(): ActionUpdateThread {
@@ -29,7 +29,11 @@ class AiderInspectionAction : AnAction("Run Aider Inspection", "Runs Aider inspe
     override fun update(e: AnActionEvent) {
         val project = e.project
         val editor = e.getData(CommonDataKeys.EDITOR)
-        e.presentation.isEnabledAndVisible = project != null && editor != null
+        e.presentation.apply {
+            text = "Run Aider Inspection"
+            description = "Runs Aider inspection on the current file"
+            isEnabledAndVisible = project != null && editor != null
+        }
     }
 
     override fun actionPerformed(e: AnActionEvent) {
