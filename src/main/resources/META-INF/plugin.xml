@@ -23,12 +23,14 @@
   </extensions>
 
   <actions>
-    <action id="org.vivant.robin.aider.AiderInspectionAction"
-            class="org.vivant.robin.aider.AiderInspectionAction"
-            text="Run Aider Inspection" description="Run inspections and send results to aider">
+    <group id="AiderGroup" text="Aider" popup="true">
+      <action id="org.vivant.robin.aider.AiderInspectionAction"
+              class="org.vivant.robin.aider.AiderInspectionAction"
+              text="Run Aider Inspection" description="Run inspections and send results to aider">
+        <keyboard-shortcut keymap="$default" first-keystroke="shift meta ;"/>
+      </action>
       <add-to-group group-id="EditorPopupMenu" anchor="last"/>
-      <keyboard-shortcut keymap="$default" first-keystroke="shift meta ;"/>
-    </action>
+    </group>
   </actions>
 
   <idea-version since-build="232" until-build="242.*"/>
