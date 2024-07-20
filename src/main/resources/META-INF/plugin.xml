@@ -16,7 +16,6 @@
   <version>1.0</version>
 
   <depends>com.intellij.modules.platform</depends>
-  <depends>com.intellij.modules.java</depends>
 
   <extensions defaultExtensionNs="com.intellij">
     <toolWindow id="Aider Output" secondary="false" icon="/META-INF/pluginIcon.svg" anchor="right"
