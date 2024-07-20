@@ -30,7 +30,7 @@ class AiderInspectionAction : AnAction() {
 
         // Run all enabled inspections
         val inspectionManager = InspectionManager.getInstance(project)
-        val problemDescriptors = InspectionEngine.runInspectionOnFile(psiFile, tools, inspectionManager.createNewGlobalContext(false))
+        val problemDescriptors = InspectionEngine.runInspectionOnFile(psiFile, tools, inspectionManager.createNewGlobalContext())
 
         problems.addAll(problemDescriptors.map { problem ->
             "${psiFile.name}:${editor.document.getLineNumber(problem.psiElement.textRange.startOffset) + 1}: ${problem.descriptionTemplate}"
