@@ -32,6 +32,15 @@ class AiderInspectionAction : AnAction() {
 
         // Run all enabled inspections
         val inspectionManager = InspectionManager.getInstance(project)
+        /*
+        TODO
+        for tools var:
+        Type mismatch.
+Required:
+InspectionToolWrapper<*, *>
+Found:
+List<InspectionToolWrapper<*, *>>
+         */
         val problemDescriptors = InspectionEngine.runInspectionOnFile(psiFile, tools, inspectionManager.createNewGlobalContext())
 
         problems.addAll(problemDescriptors.mapNotNull { problem ->
