@@ -2,12 +2,10 @@ package org.vivant.robin.aider
 
 import com.intellij.codeInspection.InspectionEngine
 import com.intellij.codeInspection.InspectionManager
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.openapi.actionSystem.ActionUpdateThread
-import com.intellij.openapi.application.ReadAction
-import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
@@ -80,7 +78,11 @@ class AiderInspectionAction : AnAction() {
             } catch (e: Exception) {
                 LOG.error("Error during inspection", e)
                 com.intellij.openapi.application.ApplicationManager.getApplication().invokeLater {
-                    Messages.showErrorDialog(project, "An error occurred during inspection: ${e.message}", "Inspection Error")
+                    Messages.showErrorDialog(
+                        project,
+                        "An error occurred during inspection: ${e.message}",
+                        "Inspection Error"
+                    )
                 }
             }
 
@@ -112,11 +114,12 @@ class AiderInspectionAction : AnAction() {
                         LOG.info("Starting Aider process")
                         indicator.text = "Starting Aider process"
                         indicator.isIndeterminate = false
-                        
+
                         val escapedProblems = problems.replace("\"", "\\\"").replace("$", "\\$")
-                        val process = ProcessBuilder("bash", "-c", "echo \"$escapedProblems\" | aider --no-auto-commits")
-                            .redirectErrorStream(true)
-                            .start()
+                        val process =
+                            ProcessBuilder("bash", "-c", "echo \"$escapedProblems\" | aider --no-auto-commits")
+                                .redirectErrorStream(true)
+                                .start()
 
                         val reader = BufferedReader(InputStreamReader(process.inputStream))
                         val output = StringBuilder()
@@ -141,7 +144,10 @@ class AiderInspectionAction : AnAction() {
                             updateToolWindowContent(toolWindow, output.toString())
                             com.intellij.notification.NotificationGroupManager.getInstance()
                                 .getNotificationGroup("Aider Inspection")
-                                ?.createNotification("Aider inspection complete", com.intellij.notification.NotificationType.INFORMATION)
+                                ?.createNotification(
+                                    "Aider inspection complete",
+                                    com.intellij.notification.NotificationType.INFORMATION
+                                )
                                 ?.notify(project)
                         }
                     } catch (e: Exception) {
@@ -150,11 +156,15 @@ class AiderInspectionAction : AnAction() {
                             when (e) {
                                 is java.io.IOException -> {
                                     if (e.message?.contains("Cannot run program \"aider\"") == true) {
-                                        updateToolWindowContent(toolWindow, "Error: Aider command not found. Please ensure Aider is installed and in your PATH.")
+                                        updateToolWindowContent(
+                                            toolWindow,
+                                            "Error: Aider command not found. Please ensure Aider is installed and in your PATH."
+                                        )
                                     } else {
                                         updateToolWindowContent(toolWindow, "Error: ${e.message}")
                                     }
                                 }
+
                                 else -> updateToolWindowContent(toolWindow, "Error: ${e.message}")
                             }
                         }
