@@ -152,8 +152,7 @@ class AiderInspectionAction : AnAction() {
 
     private fun updateToolWindowContent(toolWindow: ToolWindow, content: String) {
         val contentManager = toolWindow.contentManager
-        // TODO 'com.intellij.ui.content.ContentFactory.SERVICE' is deprecated and marked for removal
-        val factory = com.intellij.ui.content.ContentFactory.SERVICE.getInstance()
+        val factory = com.intellij.ui.content.ContentFactory.getInstance()
         val newContent = factory.createContent(
             com.intellij.ui.components.JBScrollPane(
                 com.intellij.ui.components.JBTextArea(content).apply {
