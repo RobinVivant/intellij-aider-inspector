@@ -6,6 +6,7 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.ActionUpdateThread
+import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
@@ -50,46 +51,50 @@ class AiderInspectionAction : AnAction() {
             return
         }
 
-        val problems = mutableListOf<String>()
+        com.intellij.openapi.application.ReadAction.nonBlocking<List<String>> {
+            val problems = mutableListOf<String>()
 
-        try {
-            // Get all enabled inspections
-            val profile = InspectionProjectProfileManager.getInstance(project).currentProfile
-            val tools = profile.getAllTools()
-                .filter { it.isEnabled }
-                .map { it.tool }
+            try {
+                // Get all enabled inspections
+                val profile = InspectionProjectProfileManager.getInstance(project).currentProfile
+                val tools = profile.getAllTools()
+                    .filter { it.isEnabled }
+                    .map { it.tool }
 
-            LOG.info("Running ${tools.size} enabled inspections")
+                LOG.info("Running ${tools.size} enabled inspections")
 
-            // Run all enabled inspections
-            val inspectionManager = InspectionManager.getInstance(project)
-            val problemDescriptors = tools.flatMap { tool ->
-                InspectionEngine.runInspectionOnFile(psiFile, tool, inspectionManager.createNewGlobalContext())
+                // Run all enabled inspections
+                val inspectionManager = InspectionManager.getInstance(project)
+                val problemDescriptors = tools.flatMap { tool ->
+                    InspectionEngine.runInspectionOnFile(psiFile, tool, inspectionManager.createNewGlobalContext())
+                }
+
+                problems.addAll(problemDescriptors.mapNotNull { problem ->
+                    problem.psiElement?.let { element ->
+                        "${psiFile.name}:${editor.document.getLineNumber(element.textRange.startOffset) + 1}: ${problem.descriptionTemplate}"
+                    }
+                })
+
+                LOG.info("Found ${problems.size} problems")
+            } catch (e: Exception) {
+                LOG.error("Error during inspection", e)
+                com.intellij.openapi.application.ApplicationManager.getApplication().invokeLater {
+                    Messages.showErrorDialog(project, "An error occurred during inspection: ${e.message}", "Inspection Error")
+                }
             }
 
-            problems.addAll(problemDescriptors.mapNotNull { problem ->
-                problem.psiElement?.let { element ->
-                    "${psiFile.name}:${editor.document.getLineNumber(element.textRange.startOffset) + 1}: ${problem.descriptionTemplate}"
-                }
-            })
-
-            LOG.info("Found ${problems.size} problems")
-
+            problems
+        }.finishOnUiThread(com.intellij.openapi.application.ModalityState.defaultModalityState()) { problems ->
             if (problems.isEmpty()) {
-                com.intellij.openapi.application.ApplicationManager.getApplication().invokeLater {
-                    Messages.showInfoMessage(project, "No issues found in the current file.", "Aider Inspection")
-                }
-                return
+                Messages.showInfoMessage(project, "No issues found in the current file.", "Aider Inspection")
+                return@finishOnUiThread
             }
 
             // Format problems for aider
             val formattedProblems = problems.joinToString("\n")
 
             sendToAider(project, formattedProblems)
-        } catch (e: Exception) {
-            LOG.error("Error during inspection", e)
-            Messages.showErrorDialog(project, "An error occurred during inspection: ${e.message}", "Inspection Error")
-        }
+        }.submit(com.intellij.openapi.progress.util.ProgressIndicatorUtils.getGlobalProgressIndicator())
     }
 
     private fun sendToAider(project: Project, problems: String) {
