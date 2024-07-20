@@ -155,14 +155,13 @@ class AiderInspectionAction : AnAction() {
 
                         // Update the tool window content
                         com.intellij.openapi.application.ApplicationManager.getApplication().invokeLater {
-                            updateToolWindowContent(toolWindow, output.toString())
-                            com.intellij.notification.NotificationGroupManager.getInstance()
-                                .getNotificationGroup("Aider Inspection")
-                                ?.createNotification(
+                            updateToolWindowContent(project, toolWindow, output.toString())
+                            com.intellij.notification.NotificationGroup("Aider Inspection", NotificationDisplayType.BALLOON, true)
+                                .createNotification(
                                     "Aider inspection complete",
-                                    com.intellij.notification.NotificationType.INFORMATION
+                                    NotificationType.INFORMATION
                                 )
-                                ?.notify(project)
+                                .notify(project)
                         }
                     } catch (e: Exception) {
                         LOG.error("Error running Aider", e)
