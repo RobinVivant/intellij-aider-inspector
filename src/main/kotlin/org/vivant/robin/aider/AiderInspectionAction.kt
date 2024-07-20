@@ -33,8 +33,10 @@ class AiderInspectionAction : AnAction() {
         val inspectionManager = InspectionManager.getInstance(project)
         val problemDescriptors = InspectionEngine.runInspectionOnFile(psiFile, tools, inspectionManager.createNewGlobalContext())
 
-        problems.addAll(problemDescriptors.map { problem ->
-            "${psiFile.name}:${editor.document.getLineNumber(problem.psiElement.textRange.startOffset) + 1}: ${problem.descriptionTemplate}"
+        problems.addAll(problemDescriptors.mapNotNull { problem ->
+            problem.psiElement?.let { element ->
+                "${psiFile.name}:${editor.document.getLineNumber(element.textRange.startOffset) + 1}: ${problem.descriptionTemplate}"
+            }
         })
 
         if (problems.isEmpty()) {
