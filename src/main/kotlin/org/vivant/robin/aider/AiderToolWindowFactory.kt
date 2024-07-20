@@ -9,13 +9,13 @@ import com.intellij.openapi.wm.ToolWindowFactory
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.components.JBTextArea
 import com.intellij.ui.content.ContentFactory
-import javax.swing.JPanel
 import java.awt.BorderLayout
+import javax.swing.JPanel
 
 class AiderToolWindowFactory : ToolWindowFactory {
     override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
         val panel = JPanel(BorderLayout())
-        
+
         // Create the play button
         val actionManager = ActionManager.getInstance()
         val action = actionManager.getAction("org.vivant.robin.aider.AiderInspectionAction")
@@ -28,7 +28,7 @@ class AiderToolWindowFactory : ToolWindowFactory {
         }
         panel.add(JBScrollPane(textArea), BorderLayout.CENTER)
 
-        val content = ContentFactory.getInstance(project).createContent(panel, "Aider Output", false)
+        val content = ContentFactory.getInstance().createContent(panel, "Aider Output", false)
         toolWindow.contentManager.addContent(content)
     }
 }
@@ -49,7 +49,7 @@ fun updateToolWindowContent(project: Project, toolWindow: ToolWindow, output: St
 
     // If we couldn't update the existing content, create a new one
     val panel = JPanel(BorderLayout())
-    
+
     val actionManager = ActionManager.getInstance()
     val action = actionManager.getAction("org.vivant.robin.aider.AiderInspectionAction")
     val toolbar = actionManager.createActionToolbar(ActionPlaces.TOOLBAR, DefaultActionGroup(action), true)
@@ -60,7 +60,7 @@ fun updateToolWindowContent(project: Project, toolWindow: ToolWindow, output: St
     }
     panel.add(JBScrollPane(textArea), BorderLayout.CENTER)
 
-    val newContent = ContentFactory.getInstance(project).createContent(panel, "Aider Output", false)
+    val newContent = ContentFactory.getInstance().createContent(panel, "Aider Output", false)
 
     toolWindow.contentManager.removeAllContents(true)
     toolWindow.contentManager.addContent(newContent)
